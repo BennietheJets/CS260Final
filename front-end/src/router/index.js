@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Dashboard from '../views/Dashboard.vue';
-import Photo from '../views/Application.vue';
+import Application from '../views/Application.vue';
 
 
 Vue.use(VueRouter);
