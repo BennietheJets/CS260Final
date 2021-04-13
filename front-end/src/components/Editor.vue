@@ -2,10 +2,10 @@
 <transition v-if="show" name="modal">
   <div class="modal-mask">
     <div class="modal-container">
-      <form class="pure-form" @submit.prevent="upload">
-        <legend>Add new application to track</legend>
+      <form class="pure-form" @submit.prevent="editApplication">
+        <legend>Edit application (I did not get the edit to work, I'm as disappointed as you are....)</legend>
         <fieldset>
-          <input v-model="title" placeholder="Job Title">
+          <input v-model="title" placeholder="Title">
         </fieldset>
         <fieldset>
           <input v-model="company" placeholder="Company">
@@ -31,7 +31,7 @@
         </fieldset>
         <fieldset class="buttons">
           <button type="button" @click="close" class="pure-button">Close</button>
-          <button type="submit" class="pure-button pure-button-primary right">Submit</button>
+          <button type="submit" @click="editApplication(application.title, application.company, application.pay, application.description, application.questions)" class="pure-button pure-button-primary right">Edit</button>
         </fieldset>
       </form>
     </div>
@@ -42,7 +42,7 @@
 <script>
 import axios from 'axios';
 export default {
-  name: 'Uploader',
+  name: 'Editor',
   props: {
     show: Boolean,
   },
@@ -58,28 +58,43 @@ export default {
       offered: '',
       accepted: '',
       error: '',
+      id: '',
+      application: null,
     }
   },
+  created() {
+      this.getApplication();
+  },
   methods: {
+    async getApplication() {
+      try {
+        let response = await axios.get("/api/applications/" + this.id);
+        this.applications = response.data
+      } catch (e) {
+        this.error = e.response.data.message;
+        console.log(e);
+      }
+    },
   close() {
     this.$emit('close');
   },
-    async upload() {
+  async editApplication(title, company, pay, questions, description) {
       try {
-        const formData = new FormData();
-        formData.append('title', this.title);
-        formData.append('company', this.company);
-        formData.append('pay', this.pay);
-        formData.append('description', this.description);
-        formData.append('questions', this.questions);
-        await axios.post("/api/applications", formData);
-        this.title = "";
-        this.description = "";
-        this.$emit('uploadFinished');
+        await axios.put("/api/applications/" + this.id, {
+          title: title,
+          company: company,
+          pay: pay,
+          description: description,
+          questions: questions,
+        });
+        this.findItem = null;
+        this.getApplication();
+        this.$emit('editFinished');
+        return true;
       } catch (error) {
-        this.error = "Error: " + error.response.data.message;
+        console.log(error);
       }
-    }
+    },
   }
 }
 </script>

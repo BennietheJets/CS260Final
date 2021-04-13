@@ -2,7 +2,7 @@
 <div>
   <section class="all-applications">
     <div class="application" v-for="application in applications" v-bind:key="application._id">
-      <router-link :to="{ name: 'application', params: { id: application._id }}">
+      <router-link :to="{ name: 'application', params: { id: application._id }}" @click="setID()">
       <div class="applicationInfo">
         <p class="applicationTitle">{{application.title}}</p>
         <p class="applicationName">{{application.user.firstName}} {{application.user.lastName}}</p>
@@ -12,7 +12,6 @@
       <p>{{application.pay}}</p>
       <br />
       <p>{{application.description}}</p>
-      <p>{{application.questions}}</p>
       <p class="applicationDate">{{formatDate(application.created)}}</p>
     </div>
   </section>
@@ -33,6 +32,9 @@ export default {
         return moment(date).fromNow();
       else
         return moment(date).format('d MMMM YYYY');
+    },
+    setID() {
+      this.$root.$data.application = this.application;
     }
   }
 }

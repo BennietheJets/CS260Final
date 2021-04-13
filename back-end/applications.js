@@ -56,12 +56,12 @@ const applicationSchema = new mongoose.Schema({
       let application = await Application.findOne({
         _id : req.params.id
       });
-      user = req.user,
-      appliction.title = req.body.title;
+      //user = req.user,
+      application.title = req.body.title;
       application.description = req.body.description;
       application.company = req.body.company;
       application.pay = req.body.pay;
-      applications.questions = req.body.questions;
+      application.questions = req.body.questions;
       application.save();
       res.sendStatus(200);
     } catch (error) {

@@ -1,6 +1,5 @@
 <template lang="html">
   <div class="box">
-    <button @click="deleteApplication()" class="pure-button pure-button-primary left delete">Delete</button>
     <div class="image" v-for="application in applications" :key="application._id">
       <h2>{{application.title}}</h2>
       <h3>{{application.company}}</h3>
@@ -9,27 +8,34 @@
       <p>{{application.description}}</p>
       <p>{{application.questions}}</p>
       <p v-if="error">{{error}}</p>
+      <router-link to="/dashboard" ><button @click="deleteApplication()" class="pure-button pure-button-primary left delete">Delete</button></router-link>
+      <editor :show="show" @close="close" @editFinished="editFinished" /> <a @click="toggleEdit">Edit</a>
     </div>
-    <button @click="editApplication()" class="pure-button pure-button-primary right">Edit</button>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
 import moment from 'moment';
+import Editor from '@/components/Editor.vue';
 export default {
   name: 'Application',
+  components: {
+    Editor
+  },
   data() {
     return {
       id: '',
-      applications: [],
-      error: ''
+      applications: null,
+      error: '',
+      findItem: null,
+      show: false,
     }
   },
   created() {
     this.id = this.$route.params.id;
     this.getApplication();
-  },
+  }, 
   methods: {
     async getApplication() {
       try {
@@ -40,21 +46,15 @@ export default {
         console.log(e);
       }
     },
-    async editApplication() {
-      try {
-        await axios.put("/api/applications/" + this.id, {
-          title: this.findItem.title,
-          company: this.findItem.company,
-          pay: this.findItem.pay,
-          questions: this.findItem.questions,
-          description: this.findItem.description,
-        });
-        this.findItem = null;
-        this.getApplication();
-        return true;
-      } catch (error) {
-        console.log(error);
-      }
+    toggleEdit() {
+      this.show = true;
+    },
+     close() {
+      this.show = false;
+    },
+    async editFinished() {
+      this.show = false;
+      this.getApplications();
     },
     async deleteApplication() {
       try {
