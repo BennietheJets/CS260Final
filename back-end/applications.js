@@ -4,7 +4,7 @@ const router = express.Router();
 
 const multer = require('multer')
 const upload = multer({
-  dest: '/var/www/photobomb.benniesorensen.com/images/',
+  dest: '/var/www/finalproject.benniesorensen.com/images/',
   limits: {
     fileSize: 50000000
   }
